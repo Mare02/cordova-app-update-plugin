@@ -150,14 +150,11 @@ NSString *appStoreURL = nil;
     updater.alertMessage = iosArgs[@"alertMessage"];
     updater.alertUpdateButtonTitle = iosArgs[@"alertUpdateButtonTitle"];
     updater.alertCancelButtonTitle = iosArgs[@"alertCancelButtonTitle"];
-
+    
     BOOL hasConnection = [updater hasConnection];
     if (hasConnection) {
-        BOOL hasNewVersion = NO;
         [updater checkNewAppVersion:^(BOOL newVersion, NSInteger days) {
             if(newVersion){
-                hasNewVersion = YES;
-
                 NSString *type = iosArgs[@"type"];
                 if([type isEqual:@"MIXED"]){
                     NSInteger flexibleUpdateStalenessDays = [iosArgs[@"flexibleUpdateStalenessDays"] integerValue];
@@ -181,20 +178,20 @@ NSString *appStoreURL = nil;
                         [updater alertUpdateWithForce:YES];
                     }
                 }
+
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"has-update"];
             }
+            else {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"no-update"];
+            }
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }];
-        if(hasNewVersion){
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"has-update"];
-        }
-        else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"no-update"];
-        }
     }
     else
     {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"failure"];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"failure"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 @end
