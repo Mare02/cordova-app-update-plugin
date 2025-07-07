@@ -150,11 +150,14 @@ NSString *appStoreURL = nil;
     updater.alertMessage = iosArgs[@"alertMessage"];
     updater.alertUpdateButtonTitle = iosArgs[@"alertUpdateButtonTitle"];
     updater.alertCancelButtonTitle = iosArgs[@"alertCancelButtonTitle"];
-    
+
     BOOL hasConnection = [updater hasConnection];
     if (hasConnection) {
+        BOOL hasNewVersion = NO;
         [updater checkNewAppVersion:^(BOOL newVersion, NSInteger days) {
             if(newVersion){
+                hasNewVersion = YES;
+
                 NSString *type = iosArgs[@"type"];
                 if([type isEqual:@"MIXED"]){
                     NSInteger flexibleUpdateStalenessDays = [iosArgs[@"flexibleUpdateStalenessDays"] integerValue];
@@ -180,7 +183,12 @@ NSString *appStoreURL = nil;
                 }
             }
         }];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+        if(hasNewVersion){
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"has-update"];
+        }
+        else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"no-update"];
+        }
     }
     else
     {
