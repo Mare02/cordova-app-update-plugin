@@ -154,6 +154,7 @@ NSString *appStoreURL = nil;
     BOOL hasConnection = [updater hasConnection];
     if (hasConnection) {
         [updater checkNewAppVersion:^(BOOL newVersion, NSInteger days) {
+            CDVPluginResult* pluginResult = nil;
             if(newVersion){
                 NSString *type = iosArgs[@"type"];
                 if([type isEqual:@"MIXED"]){
