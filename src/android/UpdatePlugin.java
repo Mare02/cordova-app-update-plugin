@@ -144,12 +144,8 @@ public class UpdatePlugin extends CordovaPlugin {
                     checkForUpdate(AppUpdateType.FLEXIBLE, appUpdateInfo);
                 }
 
-                String stringResult = "no-update";
-                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                    stringResult = "has-update";
-                }
-
-                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, stringResult);
+                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK,
+                        appUpdateInfo.availableVersionCode());
                 callbackContext.sendPluginResult(pluginResult);
             });
         } catch (final Exception e) {
